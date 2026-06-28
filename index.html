@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Private Media Library</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="variables.css">
+    <link rel="stylesheet" href="globals.css">
+    <link rel="stylesheet" href="layout.css">
+    <link rel="stylesheet" href="components.css">
+</head>
+<body>
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="login-screen">
+        <div class="login-box">
+            <i class="fa-solid fa-lock login-icon"></i>
+            <input type="password" id="login-password" class="login-input" placeholder="Contraseña..." autofocus>
+            <button id="login-btn" class="login-btn">Entrar</button>
+            <p id="login-error" class="login-error hidden">Contraseña incorrecta</p>
+        </div>
+    </div>
+
+    <div id="app" class="hidden">
+        <!-- Sidebar overlay (mobile) -->
+        <div id="sidebar-overlay" class="sidebar-overlay"></div>
+
+        <!-- Sidebar -->
+        <aside id="sidebar" class="sidebar">
+            <div class="sidebar-header">
+                <i class="fa-solid fa-layer-group logo-icon"></i>
+                <span class="logo-text">Library</span>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <span class="nav-section-title">General</span>
+                    <a href="#" class="nav-item active" data-view="home">
+                        <i class="fa-solid fa-house"></i>
+                        <span>Inicio</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">DB</span>
+                    <a href="#" class="nav-item" data-view="comics">
+                        <i class="fa-solid fa-book-open"></i>
+                        <span>Comics</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="videos">
+                        <i class="fa-solid fa-film"></i>
+                        <span>Videos</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="artists">
+                        <i class="fa-solid fa-palette"></i>
+                        <span>Artistas</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-title">H</span>
+                    <a href="#" class="nav-item" data-view="h-hen">
+                        <i class="fa-solid fa-heart"></i>
+                        <span>Hen</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="h-c">
+                        <i class="fa-solid fa-c"></i>
+                        <span>C</span>
+                    </a>
+                    <a href="#" class="nav-item" data-view="h-v">
+                        <i class="fa-solid fa-v"></i>
+                        <span>V</span>
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <header class="topbar">
+                <button id="hamburger-btn" class="hamburger-btn" aria-label="Menú">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+
+                <div class="breadcrumbs">
+                    <span id="breadcrumb-root">DB</span>
+                    <i class="fa-solid fa-chevron-right separator"></i>
+                    <span id="breadcrumb-current" class="highlight">Comics</span>
+                </div>
+
+                <div class="search-container">
+                    <i class="fa-solid fa-search search-icon"></i>
+                    <input type="text" id="global-search" placeholder="Buscar títulos, autores, etiquetas...">
+                </div>
+
+                <div class="sort-controls">
+                    <button class="action-btn sort-btn active" data-sort="newest" title="Más nuevo primero"><i class="fa-solid fa-clock"></i> Nuevo</button>
+                    <button class="action-btn sort-btn" data-sort="oldest" title="Más antiguo primero"><i class="fa-solid fa-clock-rotate-left"></i> Antiguo</button>
+                </div>
+
+                <div class="quick-actions">
+                    <button class="icon-btn" title="Favoritos"><i class="fa-solid fa-bookmark"></i></button>
+                    <button class="icon-btn" title="Historial"><i class="fa-solid fa-clock-rotate-left"></i></button>
+                    <button class="icon-btn" title="Configuración"><i class="fa-solid fa-gear"></i></button>
+                </div>
+            </header>
+
+            <div id="views-container" class="views-container">
+                <!-- injected by JS -->
+            </div>
+        </main>
+
+        <!-- Reader Modal -->
+        <div id="reader-modal" class="modal-overlay hidden">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="reader-title">Title</h2>
+                    <div class="modal-actions">
+                        <button id="btn-mark-read" class="action-btn"><i class="fa-solid fa-check"></i><span class="btn-label"> Marcar Leído</span></button>
+                        <button id="btn-close-reader" class="icon-btn"><i class="fa-solid fa-xmark"></i></button>
+                    </div>
+                </div>
+                <div class="modal-body" id="reader-body">
+                    <!-- iframe injected here -->
+                </div>
+            </div>
+        </div>
+
+        <button id="scroll-to-top" class="scroll-to-top hidden" title="Volver arriba">
+            <i class="fa-solid fa-arrow-up"></i>
+        </button>
+    </div>
+
+    <script src="config.js"></script>
+    <script src="storage.js"></script>
+    <script src="jsonParser.js"></script>
+
+    <script src="comicsView.js"></script>
+    <script src="videosView.js"></script>
+    <script src="artistsView.js"></script>
+    <script src="hHenView.js"></script>
+
+    <script src="app.js"></script>
+</body>
+</html>
