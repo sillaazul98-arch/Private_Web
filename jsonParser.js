@@ -1,12 +1,12 @@
 window.App.services.jsonParser = {
-    async loadFromPath(path) {
+    async loadFromPath(path, channelType) {
         try {
             const response = await fetch(path);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            return this.parseMessages(data.messages || []);
+            return this.parseMessages(data.messages || [], channelType);
         } catch (error) {
             console.error(`Error loading JSON from ${path}:`, error);
             if (window.location.protocol === 'file:') {
@@ -17,10 +17,10 @@ window.App.services.jsonParser = {
     },
 
     async loadLibrary() {
-        return this.loadFromPath(window.App.config.henJsonPath);
+        return this.loadFromPath(window.App.config.henJsonPath, 'hen');
     },
 
-    parseMessages(messages) {
+    parseMessages(messages, channelType) {
         const library = [];
         
         messages.forEach(msg => {
@@ -50,13 +50,12 @@ window.App.services.jsonParser = {
                 const urlMatch = msg.content.match(/https:\/\/drive\.google\.com[^\s]*/);
                 const contentUrl = urlMatch ? urlMatch[0] : msg.content;
 
-                // Use Google Drive thumbnail as primary cover (permanent, doesn't expire)
-                const driveIdMatch = contentUrl.match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+                // Use Discord CDN URL as primary (works when fresh), local path as fallback (permanent)
                 let coverUrl = cover.url;
                 let coverUrlFallback = null;
-                if (driveIdMatch) {
-                    coverUrl = `https://drive.google.com/thumbnail?id=${driveIdMatch[1]}&sz=w400`;
-                    coverUrlFallback = cover.url;
+                if (channelType && cover.id) {
+                    const ext = cover.fileName ? cover.fileName.split('.').pop() : 'jpg';
+                    coverUrlFallback = `covers/${channelType}/${cover.id}.${ext}`;
                 }
 
                 library.push({
