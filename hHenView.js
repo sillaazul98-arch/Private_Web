@@ -25,10 +25,16 @@ window.App.views.hHen = {
 
         filteredLibrary.forEach(item => {
             const cleanTitle = item.title.replace(/https?:\/\/\S+/g, '').trim();
+            const driveMatch = (item.contentUrl || '').match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+            const thumbUrl = driveMatch ? `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w300` : '';
+            const coverSrc = item.coverUrl || thumbUrl;
+            const initial = (cleanTitle || '?').charAt(0).toUpperCase();
+
             html += `
                 <div class="media-card" data-id="${item.id}" data-title="${cleanTitle}">
                     <div class="media-cover-container">
-                        <img src="${item.coverUrl}" alt="Cover" class="media-cover" loading="lazy">
+                        <img src="${coverSrc}" alt="Cover" class="media-cover" loading="lazy" decoding="async" referrerpolicy="no-referrer"${thumbUrl ? ` data-fallback="${thumbUrl}"` : ''}>
+                        <div class="cover-placeholder" style="display:none">${initial}</div>
                     </div>
                     <div class="media-info">
                         <h3 class="media-title" title="${cleanTitle}">${cleanTitle}</h3>
@@ -42,6 +48,20 @@ window.App.views.hHen = {
 
         html += '</div>';
         container.innerHTML = html;
+
+        // Fallback cover images: try Drive thumbnail, then show text placeholder
+        container.querySelectorAll('.media-cover').forEach(img => {
+            img.addEventListener('error', function() {
+                const fb = this.getAttribute('data-fallback');
+                const placeholder = this.parentElement?.querySelector('.cover-placeholder');
+                if (fb && this.src !== fb) {
+                    this.src = fb;
+                } else if (placeholder) {
+                    this.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                }
+            });
+        });
 
         // Add event listeners
         const cards = container.querySelectorAll('.media-card');
@@ -81,11 +101,14 @@ window.App.views.hHen = {
         } else {
             chaptersHtml = '<div class="chapters-grid">';
             chapters.forEach((ch, index) => {
-                const thumbUrl = ch.thumb || item.coverUrl;
+                const chDriveMatch = (ch.fileId || '').match(/^[a-zA-Z0-9_-]+$/);
+                const chThumbUrl = ch.thumb || (chDriveMatch ? `https://drive.google.com/thumbnail?id=${ch.fileId}&sz=w300` : item.coverUrl);
+                const chInitial = (ch.fileName || '?').charAt(0).toUpperCase();
                 chaptersHtml += `
                     <div class="media-card chapter-card" data-chapter-index="${index}" data-file-id="${ch.fileId}" data-file-type="${ch.fileType}">
                         <div class="media-cover-container">
-                            <img src="${thumbUrl}" alt="Cover" class="media-cover" loading="lazy">
+                            <img src="${chThumbUrl}" alt="Cover" class="media-cover" loading="lazy" decoding="async" referrerpolicy="no-referrer">
+                            <div class="cover-placeholder" style="display:none">${chInitial}</div>
                         </div>
                         <div class="media-info">
                             <h3 class="media-title" title="${ch.fileName}">${ch.fileName}</h3>
@@ -114,6 +137,17 @@ window.App.views.hHen = {
                 </div>
             </div>
         `;
+
+        // Fallback chapter thumbnails
+        container.querySelectorAll('.chapter-card .media-cover').forEach(img => {
+            img.addEventListener('error', function() {
+                const placeholder = this.parentElement?.querySelector('.cover-placeholder');
+                if (placeholder) {
+                    this.style.display = 'none';
+                    placeholder.style.display = 'flex';
+                }
+            });
+        });
 
         document.getElementById('btn-back-library').addEventListener('click', () => {
             this.renderLibrary(container, library, searchQuery);
