@@ -1,12 +1,12 @@
 window.App.services.jsonParser = {
-    async loadFromPath(path) {
+    async loadFromPath(path, channelType) {
         try {
             const response = await fetch(path);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
-            return this.parseMessages(data.messages || []);
+            return this.parseMessages(data.messages || [], channelType);
         } catch (error) {
             console.error(`Error loading JSON from ${path}:`, error);
             if (window.location.protocol === 'file:') {
@@ -17,10 +17,10 @@ window.App.services.jsonParser = {
     },
 
     async loadLibrary() {
-        return this.loadFromPath(window.App.config.henJsonPath);
+        return this.loadFromPath(window.App.config.henJsonPath, 'hen');
     },
 
-    parseMessages(messages) {
+    parseMessages(messages, channelType) {
         const library = [];
         
         messages.forEach(msg => {
@@ -50,10 +50,22 @@ window.App.services.jsonParser = {
                 const urlMatch = msg.content.match(/https:\/\/drive\.google\.com[^\s]*/);
                 const contentUrl = urlMatch ? urlMatch[0] : msg.content;
 
+                // Use local cover path if channelType is provided, otherwise use Discord CDN URL
+                let coverUrl;
+                let coverUrlFallback = cover.url;
+                if (channelType && cover.id) {
+                    const ext = cover.fileName ? cover.fileName.split('.').pop() : 'jpg';
+                    coverUrl = `covers/${channelType}/${cover.id}.${ext}`;
+                } else {
+                    coverUrl = cover.url;
+                    coverUrlFallback = null;
+                }
+
                 library.push({
                     id: msg.id,
                     title: title,
-                    coverUrl: cover.url,
+                    coverUrl: coverUrl,
+                    coverUrlFallback: coverUrlFallback,
                     contentUrl: contentUrl,
                     date: new Date(msg.timestamp).toLocaleDateString(),
                     timestamp: new Date(msg.timestamp).getTime(),
