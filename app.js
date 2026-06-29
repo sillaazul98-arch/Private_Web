@@ -382,9 +382,9 @@ document.addEventListener('DOMContentLoaded', async () => {
 
     // Fetch JSON
     const [henLibrary, comicsLibrary, vLibrary] = await Promise.all([
-        window.App.services.jsonParser.loadFromPath(window.App.config.henJsonPath, 'hen'),
-        window.App.services.jsonParser.loadFromPath(window.App.config.comicsJsonPath, 'comics'),
-        window.App.services.jsonParser.loadFromPath(window.App.config.vJsonPath, 'v')
+        window.App.services.jsonParser.loadFromPath(window.App.config.henJsonPath),
+        window.App.services.jsonParser.loadFromPath(window.App.config.comicsJsonPath),
+        window.App.services.jsonParser.loadFromPath(window.App.config.vJsonPath)
     ]);
     window.App.state.library = henLibrary;
     window.App.state.comicsLibrary = comicsLibrary;
