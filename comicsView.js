@@ -36,7 +36,7 @@ window.App.views.comics = {
             html += `
                 <div class="media-card" data-id="${comic.id}" data-url="${comic.contentUrl}" data-title="${comic.title}">
                     <div class="media-cover-container">
-                        <img src="${comic.coverUrl}" alt="Cover" class="media-cover" loading="lazy" ${comic.coverUrlFallback ? `data-fallback="${comic.coverUrlFallback}"` : ''}>
+                        <img src="${comic.coverUrl}" alt="Cover" class="media-cover" loading="lazy" ${comic.coverUrlFallback ? `onerror="this.onerror=null;this.src='${comic.coverUrlFallback}'"` : ''}>
                         ${statusBadge}
                     </div>
                     <div class="media-info">
@@ -52,13 +52,6 @@ window.App.views.comics = {
 
         html += '</div>';
         container.innerHTML = html;
-
-        container.querySelectorAll('img[data-fallback]').forEach(img => {
-            img.onerror = function() {
-                this.onerror = null;
-                this.src = this.getAttribute('data-fallback');
-            };
-        });
 
         // Attach event listeners to cards
         const cards = container.querySelectorAll('.media-card');

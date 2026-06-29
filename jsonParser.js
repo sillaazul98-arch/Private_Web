@@ -50,12 +50,15 @@ window.App.services.jsonParser = {
                 const urlMatch = msg.content.match(/https:\/\/drive\.google\.com[^\s]*/);
                 const contentUrl = urlMatch ? urlMatch[0] : msg.content;
 
-                // Use Discord CDN URL as primary (works when fresh), local path as fallback (permanent)
-                let coverUrl = cover.url;
-                let coverUrlFallback = null;
+                // Use local cover path if channelType is provided, otherwise use Discord CDN URL
+                let coverUrl;
+                let coverUrlFallback = cover.url;
                 if (channelType && cover.id) {
                     const ext = cover.fileName ? cover.fileName.split('.').pop() : 'jpg';
-                    coverUrlFallback = `covers/${channelType}/${cover.id}.${ext}`;
+                    coverUrl = `covers/${channelType}/${cover.id}.${ext}`;
+                } else {
+                    coverUrl = cover.url;
+                    coverUrlFallback = null;
                 }
 
                 library.push({
