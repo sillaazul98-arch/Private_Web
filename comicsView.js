@@ -36,7 +36,7 @@ window.App.views.comics = {
             html += `
                 <div class="media-card" data-id="${comic.id}" data-url="${comic.contentUrl}" data-title="${comic.title}">
                     <div class="media-cover-container">
-                        <img src="${comic.coverUrl}" alt="Cover" class="media-cover" loading="lazy" ${comic.coverUrlFallback ? `onerror="this.onerror=null;this.src='${comic.coverUrlFallback}'"` : ''}>
+                        <img src="${comic.coverUrl}" alt="Cover" class="media-cover" loading="lazy">
                         ${statusBadge}
                     </div>
                     <div class="media-info">

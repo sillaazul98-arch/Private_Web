@@ -28,7 +28,7 @@ window.App.views.hHen = {
             html += `
                 <div class="media-card" data-id="${item.id}" data-title="${cleanTitle}">
                     <div class="media-cover-container">
-                        <img src="${item.coverUrl}" alt="Cover" class="media-cover" loading="lazy" ${item.coverUrlFallback ? `onerror="this.onerror=null;this.src='${item.coverUrlFallback}'"` : ''}>
+                        <img src="${item.coverUrl}" alt="Cover" class="media-cover" loading="lazy">
                     </div>
                     <div class="media-info">
                         <h3 class="media-title" title="${cleanTitle}">${cleanTitle}</h3>
