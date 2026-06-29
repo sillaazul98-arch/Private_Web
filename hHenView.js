@@ -28,7 +28,7 @@ window.App.views.hHen = {
             html += `
                 <div class="media-card" data-id="${item.id}" data-title="${cleanTitle}">
                     <div class="media-cover-container">
-                        <img src="${item.coverUrl}" alt="Cover" class="media-cover" loading="lazy" ${item.coverUrlFallback ? `onerror="this.onerror=null;this.src='${item.coverUrlFallback}'"` : ''}>
+                        <img src="${item.coverUrl}" alt="Cover" class="media-cover" loading="lazy" ${item.coverUrlFallback ? `data-fallback="${item.coverUrlFallback}"` : ''}>
                     </div>
                     <div class="media-info">
                         <h3 class="media-title" title="${cleanTitle}">${cleanTitle}</h3>
@@ -42,6 +42,13 @@ window.App.views.hHen = {
 
         html += '</div>';
         container.innerHTML = html;
+
+        container.querySelectorAll('img[data-fallback]').forEach(img => {
+            img.onerror = function() {
+                this.onerror = null;
+                this.src = this.getAttribute('data-fallback');
+            };
+        });
 
         // Add event listeners
         const cards = container.querySelectorAll('.media-card');
