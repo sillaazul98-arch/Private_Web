@@ -132,7 +132,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (viewId === 'home') {
             viewsContainer.innerHTML = '<div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; opacity: 0.05;"><i class="fa-solid fa-layer-group" style="font-size: 15vw;"></i></div>';
         } else if (viewId === 'h-hen') {
-            window.App.views.hHen.render(viewsContainer, sortLibrary(window.App.state.library), window.App.state.searchQuery);
+            if (!window.App.state.hHenLibrary || window.App.state.hHenLibrary.length === 0) {
+                await loadHHenData();
+            }
+            window.App.views.hHen.render(viewsContainer, sortLibrary(window.App.state.hHenLibrary), window.App.state.searchQuery);
         } else if (viewId === 'h-v') {
             window.App.views.hHen.render(viewsContainer, sortLibrary(window.App.state.vLibrary), window.App.state.searchQuery);
         } else if (viewId === 'comics') {
@@ -202,10 +205,31 @@ document.addEventListener('DOMContentLoaded', async () => {
         return cDataLoading;
     }
 
+    // Lazy-load H/Hen data (chapters) only when needed
+    let hHenDataLoading = null;
+    function loadHHenData() {
+        if (window.App.config.hHenData) return Promise.resolve();
+        if (hHenDataLoading) return hHenDataLoading;
+        hHenDataLoading = new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'hHenData.js';
+            script.onload = () => {
+                window.App.state.hHenLibrary = window.App.config.hHenData || [];
+                resolve();
+            };
+            script.onerror = () => {
+                window.App.state.hHenLibrary = [];
+                resolve();
+            };
+            document.head.appendChild(script);
+        });
+        return hHenDataLoading;
+    }
+
     function reRenderCurrentView() {
         const viewId = window.App.state.currentView;
         if (viewId === 'h-hen') {
-            window.App.views.hHen.render(viewsContainer, sortLibrary(getFilteredLibrary(window.App.state.library)), window.App.state.searchQuery);
+            window.App.views.hHen.render(viewsContainer, sortLibrary(getFilteredLibrary(window.App.state.hHenLibrary)), window.App.state.searchQuery);
         } else if (viewId === 'h-v') {
             window.App.views.hHen.render(viewsContainer, sortLibrary(getFilteredLibrary(window.App.state.vLibrary)), window.App.state.searchQuery);
         } else if (viewId === 'comics') {

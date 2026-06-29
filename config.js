@@ -14,6 +14,7 @@ window.App = {
         comicsLibrary: [], // DB/Comics items
         vLibrary: [], // H/V section items
         cLibrary: [], // H/C section items
+        hHenLibrary: [], // H/Hen chapter data
         favorites: [],
         readStatus: {} // { id: 'read' | 'progress' }
     },
